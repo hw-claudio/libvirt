@@ -164,6 +164,10 @@ if WITH_XEN
     libvirtd_LDADD += ../src/libvirt_driver_xen.la
 endif
 
+if WITH_KVMTOOL
+    libvirtd_LDADD += ../src/libvirt_driver_kvmtool.la
+endif
+
 if WITH_LIBXL
     libvirtd_LDADD += ../src/libvirt_driver_libxl.la
 endif

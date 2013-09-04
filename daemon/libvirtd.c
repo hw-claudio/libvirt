@@ -68,6 +68,9 @@
 # ifdef WITH_XEN
 #  include "xen/xen_driver.h"
 # endif
+# ifdef WITH_KVMTOOL
+#  include "kvmtool/kvmtool_driver.h"
+# endif
 # ifdef WITH_LIBXL
 #  include "libxl/libxl_driver.h"
 # endif
@@ -388,6 +391,9 @@ static void daemonInitialize(void)
 # ifdef WITH_XEN
     virDriverLoadModule("xen");
 # endif
+# ifdef WITH_KVMTOOL
+    virDriverLoadModule("kvmtool");
+# endif
 # ifdef WITH_LIBXL
     virDriverLoadModule("libxl");
 # endif
@@ -424,6 +430,9 @@ static void daemonInitialize(void)
 # endif
 # ifdef WITH_XEN
     xenRegister();
+# endif
+# ifdef WITH_KVMTOOL
+    kvmtoolRegister();
 # endif
 # ifdef WITH_LIBXL
     libxlRegister();

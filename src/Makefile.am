@@ -725,6 +725,10 @@ HYPERV_DRIVER_EXTRA_DIST =							\
 		hyperv/hyperv_wmi_generator.py					\
 		$(HYPERV_DRIVER_GENERATED)
 
+KVMTOOL_DRIVER_SOURCES = \
+		kvmtool/kvmtool_conf.c kvmtool/kvmtool_conf.h \
+		kvmtool/kvmtool_driver.h kvmtool/kvmtool_driver.c
+
 PARALLELS_DRIVER_SOURCES =					\
 		parallels/parallels_driver.h			\
 		parallels/parallels_driver.c			\
@@ -1256,6 +1260,24 @@ libvirt_driver_hyperv_la_LIBADD = $(OPENWSMAN_LIBS)
 libvirt_driver_hyperv_la_SOURCES = $(HYPERV_DRIVER_SOURCES)
 endif
 
+if WITH_KVMTOOL
+if WITH_DRIVER_MODULES
+mod_LTLIBRARIES += libvirt_driver_kvmtool.la
+else
+noinst_LTLIBRARIES += libvirt_driver_kvmtool.la
+# Stateful, so linked to daemon instead
+#libvirt_la_BUILT_LIBADD += libvirt_driver_kvmtool.la
+endif
+libvirt_driver_kvmtool_la_CFLAGS = \
+                               -I top_srcdir@/src/conf $(AM_CFLAGS)
+libvirt_driver_kvmtool_la_LDFLAGS = $(AM_LDFLAGS)
+if WITH_DRIVER_MODULES
+libvirt_driver_kvmtool_la_LIBADD = ../gnulib/lib/libgnu.la
+libvirt_driver_kvmtool_la_LDFLAGS += -module -avoid-version
+endif
+libvirt_driver_kvmtool_la_SOURCES = $(KVMTOOL_DRIVER_SOURCES)
+endif
+
 if WITH_PARALLELS
 noinst_LTLIBRARIES += libvirt_driver_parallels.la
 libvirt_la_BUILT_LIBADD += libvirt_driver_parallels.la
@@ -1583,6 +1605,7 @@ EXTRA_DIST +=							\
 		$(ESX_DRIVER_EXTRA_DIST)			\
 		$(HYPERV_DRIVER_SOURCES)			\
 		$(HYPERV_DRIVER_EXTRA_DIST)			\
+		$(KVMTOOL_DRIVER_SOURCES)                       \
 		$(PARALLELS_DRIVER_SOURCES)			\
 		$(NETWORK_DRIVER_SOURCES)			\
 		$(INTERFACE_DRIVER_SOURCES)			\
@@ -2412,6 +2435,11 @@ endif
 if WITH_XEN
 	$(MKDIR_P) "$(DESTDIR)$(localstatedir)/lib/libvirt/xen"
 endif
+if WITH_KVMTOOL
+	$(MKDIR_P) "$(DESTDIR)$(localstatedir)/lib/libvirt/kvmtool"
+	$(MKDIR_P) "$(DESTDIR)$(localstatedir)/run/libvirt/kvmtool"
+	$(MKDIR_P) "$(DESTDIR)$(localstatedir)/log/libvirt/kvmtool"
+endif
 if WITH_NETWORK
 	$(MKDIR_P) "$(DESTDIR)$(localstatedir)/lib/libvirt/network"
 	$(MKDIR_P) "$(DESTDIR)$(localstatedir)/lib/libvirt/dnsmasq"
@@ -2465,6 +2493,11 @@ if WITH_UML
 endif
 if WITH_XEN
 	rmdir "$(DESTDIR)$(localstatedir)/lib/libvirt/xen" ||:
+endif
+if WITH_KVMTOOL
+	rmdir "$(DESTDIR)$(localstatedir)/lib/libvirt/kvmtool" ||:
+	rmdir "$(DESTDIR)$(localstatedir)/run/libvirt/kvmtool" ||:
+	rmdir "$(DESTDIR)$(localstatedir)/log/libvirt/kvmtool" ||:
 endif
 if WITH_NETWORK
 	rm -f $(DESTDIR)$(confdir)/qemu/networks/autostart/default.xml
