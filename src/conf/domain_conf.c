@@ -122,7 +122,8 @@ VIR_ENUM_IMPL(virDomainVirt, VIR_DOMAIN_VIRT_LAST,
               "hyperv",
               "vbox",
               "phyp",
-              "parallels")
+              "parallels",
+              "kvmtool")
 
 VIR_ENUM_IMPL(virDomainBoot, VIR_DOMAIN_BOOT_LAST,
               "fd",
@@ -7160,6 +7161,7 @@ virDomainChrDefParseXML(xmlXPathContextPtr ctxt,
     if (type == NULL) {
         def->source.type = VIR_DOMAIN_CHR_TYPE_PTY;
     } else if ((def->source.type = virDomainChrTypeFromString(type)) < 0) {
+        VIR_WARN("type = %s", type);
         virReportError(VIR_ERR_XML_ERROR,
                        _("unknown type presented to host for character device: %s"),
                        type);
