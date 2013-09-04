@@ -455,6 +455,8 @@ AC_ARG_WITH([esx],
   AC_HELP_STRING([--with-esx], [add ESX support @<:@default=check@:>@]),[],[with_esx=check])
 AC_ARG_WITH([hyperv],
   AC_HELP_STRING([--with-hyperv], [add Hyper-V support @<:@default=check@:>@]),[],[with_hyperv=check])
+AC_ARG_WITH([kvmtool],
+  AC_HELP_STRING([--with-kvmtool], [add kvm tool driver support @<:@default=yes@:>@]),[],[with_kvmtool=check])
 AC_ARG_WITH([parallels],
   AC_HELP_STRING([--with-parallels], [add Parallels Cloud Server support @<:@default=check@:>@]),[],[with_parallels=check])
 AC_ARG_WITH([test],
@@ -692,6 +694,27 @@ if test "$with_qemu" = "yes" ; then
     AC_DEFINE_UNQUOTED([WITH_QEMU], 1, [whether QEMU driver is enabled])
 fi
 AM_CONDITIONAL([WITH_QEMU], [test "$with_qemu" = "yes"])
+
+dnl
+dnl Check if kvm tool binary available (Native Linux KVM Tool driver)
+dnl
+if test "$with_kvmtool" = "yes" || test "$with_kvmtool" = "check"; then
+  AC_PATH_PROG([KVMTOOL], [kvmtool], [], [$PATH:/sbin:/usr/sbin])
+
+  if test "$with_kvmtool" = "yes"; then
+    if test -z "$KVMTOOL"; then AC_MSG_ERROR([kvm tool binary is required for kvm tool driver]); fi
+  else
+    if test -z "$KVMTOOL"; then with_kvmtool=no; fi
+
+    if test "$with_kvmtool" = "check"; then with_kvmtool=yes; fi
+  fi
+
+  if test "$with_kvmtool" = "yes"; then
+    AC_DEFINE_UNQUOTED([WITH_KVMTOOL], 1, [whether kvm tool driver is enabled])
+    AC_DEFINE_UNQUOTED([KVMTOOL],["$KVMTOOL"],[Location of kvm tool binary])
+  fi
+fi
+AM_CONDITIONAL([WITH_KVMTOOL], [test "$with_kvmtool" = "yes"])
 
 if test "$with_test" = "yes" ; then
     AC_DEFINE_UNQUOTED([WITH_TEST], 1, [whether Test driver is enabled])
@@ -2552,6 +2575,7 @@ AC_MSG_NOTICE([      LXC: $with_lxc])
 AC_MSG_NOTICE([     PHYP: $with_phyp])
 AC_MSG_NOTICE([      ESX: $with_esx])
 AC_MSG_NOTICE([  Hyper-V: $with_hyperv])
+AC_MSG_NOTICE([  KVMTOOL: $with_kvmtool])
 AC_MSG_NOTICE([Parallels: $with_parallels])
 AC_MSG_NOTICE([     Test: $with_test])
 AC_MSG_NOTICE([   Remote: $with_remote])
