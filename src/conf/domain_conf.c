@@ -2782,6 +2782,7 @@ virDomainDefPostParseInternal(virDomainDefPtr def,
             /* Create an console alias for the serial port */
             def->consoles[0]->deviceType = VIR_DOMAIN_CHR_DEVICE_TYPE_CONSOLE;
             def->consoles[0]->targetType = VIR_DOMAIN_CHR_CONSOLE_TARGET_TYPE_SERIAL;
+            def->consoles[0]->source.type = def->serials[0]->source.type;
         }
     }
 
