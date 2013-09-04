@@ -233,6 +233,10 @@
                 <span>Driver for Microsoft Hyper-V</span>
               </li>
               <li>
+                <a href="drvkvmtool.html">Native Linux KVM Tool</a>
+                <span>Driver for Native Linux KVM Tool</span>
+              </li>
+              <li>
                 <a href="drvphyp.html">IBM PowerVM</a>
                 <span>Driver for IBM PowerVM</span>
               </li>

@@ -1,0 +1,87 @@
+<html>
+  <body>
+    <h1>KVM tool driver</h1>
+
+    <ul id="toc"></ul>
+
+    <p>
+      The libvirt KVMTOOL driver manages hypervisor Native Linux KVM Tool,
+      it's implemented by using command line of kvm tool binary.
+    </p>
+
+    <h2><a name="project">Project Links</a></h2>
+
+    <ul>
+      <li>
+        The <a href="git://github.com/penberg/linux-kvm.git">Native Linux KVM Tool</a> Native
+        Linux KVM Tool
+      </li>
+    </ul>
+
+    <h2><a name="uris">Connections to the KVMTOOL driver</a></h2>
+    <p>
+      The libvirt KVMTOOL driver is a multi-instance driver, providing a single
+      system wide privileged driver (the "system" instance), and per-user
+      unprivileged drivers (the "session" instance). The URI driver protocol
+      is "kvmtool". Some example conection URIs for the libvirt driver are:
+    </p>
+
+    <pre>
+      kvmtool:///session                      (local access to per-user instance)
+      kvmtool+unix:///session                 (local access to per-user instance)
+
+      kvmtool:///system                       (local access to system instance)
+      kvmtool+unix:///system                  (local access to system instance)
+    </pre>
+    <p>
+      cgroups controllers "cpuacct", and "memory" are supported currently.
+    </p>
+
+  <h3>Example config</h3>
+
+  <pre>
+&lt;domain type='kvmtool' id='1'&gt;
+  &lt;name&gt;vm&lt;/name&gt;
+  &lt;uuid&gt;88bf38f1-b6ab-cfa6-ab53-4b4c0993d894&lt;/uuid&gt;
+  &lt;memory&gt;524288&lt;/memory&gt;
+  &lt;currentMemory&gt;524288&lt;/currentMemory&gt;
+  &lt;vcpu&gt;1&lt;/vcpu&gt;
+  &lt;os&gt;
+    &lt;type arch='x86_64'&gt;hvm&lt;/type&gt;
+    &lt;kernel&gt;/var/lib/libvirt/images/bzImage&lt;/kernel&gt;
+    &lt;boot dev='hd'/&gt;
+  &lt;/os&gt;
+  &lt;clock offset='utc'/&gt;
+  &lt;on_poweroff&gt;destroy&lt;/on_poweroff&gt;
+  &lt;on_reboot&gt;restart&lt;/on_reboot&gt;
+  &lt;on_crash&gt;restart&lt;/on_crash&gt;
+  &lt;devices&gt;
+    &lt;emulator&gt;/usr/bin/kvmtool&lt;/emulator&gt;
+    &lt;disk type='file' device='disk'&gt;
+      &lt;source file='/var/lib/libvirt/images/linux-0.2.img'/&gt;
+      &lt;target dev='vda' bus='virtio'/&gt;
+    &lt;/disk&gt;
+    &lt;filesystem type='mount' accessmode='passthrough'&gt;
+      &lt;source dir='/tmp'/&gt;
+      &lt;target dir='/mnt'/&gt;
+    &lt;/filesystem&gt;
+    &lt;console type='pty'/&gt;
+      &lt;target type='virtio' port='0'/&gt;
+    &lt;/console&gt;
+    &lt;memballoon model='virtio'/&gt;
+  &lt;/devices&gt;
+&lt;/domain&gt;
+  </pre>
+
+  <p>
+    virsh command examples:
+  </p>
+  <pre>
+    virsh --connect kvmtool:///system define vm.xml
+    virsh --connect kvmtool:///system start vm
+    virsh --connect kvmtool:///system destroy vm
+    virsh --connect kvmtool:///system undefine vm
+    virsh --connect kvmtool:///system console vm
+  </pre>
+  </body>
+</html>

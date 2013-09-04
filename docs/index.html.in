@@ -64,6 +64,9 @@
         The <a href="http://libvirt.org/drvhyperv.html">Microsoft Hyper-V</a> hypervisor
       </li>
       <li>
+        The <a href="http://libvirt.org/drvkvmtool.html";>Native Linux KVM Tool</a> hypervisor
+      </li>
+      <li>
         The <a href="http://libvirt.org/drvphyp.html">IBM PowerVM</a> hypervisor
       </li>
       <li>
