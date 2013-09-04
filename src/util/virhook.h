@@ -30,6 +30,7 @@ enum virHookDriverType {
     VIR_HOOK_DRIVER_DAEMON = 0,        /* Daemon related events */
     VIR_HOOK_DRIVER_QEMU,              /* QEmu domains related events */
     VIR_HOOK_DRIVER_LXC,               /* LXC domains related events */
+    VIR_HOOK_DRIVER_KVMTOOL,           /* KVMTOOL domains related events */
 
     VIR_HOOK_DRIVER_LAST,
 };
@@ -72,6 +73,13 @@ enum virHookLxcOpType {
     VIR_HOOK_LXC_OP_RECONNECT,        /* domain is being reconnected by libvirt */
 
     VIR_HOOK_LXC_OP_LAST,
+};
+
+enum virHookKvmToolOpType {
+    VIR_HOOK_KVMTOOL_OP_START,            /* domain is about to start */
+    VIR_HOOK_KVMTOOL_OP_STOPPED,          /* domain has stopped */
+
+    VIR_HOOK_KVMTOOL_OP_LAST,
 };
 
 int virHookInitialize(void);

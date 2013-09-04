@@ -48,12 +48,14 @@ VIR_ENUM_DECL(virHookDaemonOp)
 VIR_ENUM_DECL(virHookSubop)
 VIR_ENUM_DECL(virHookQemuOp)
 VIR_ENUM_DECL(virHookLxcOp)
+VIR_ENUM_DECL(virHookKvmToolOp)
 
 VIR_ENUM_IMPL(virHookDriver,
               VIR_HOOK_DRIVER_LAST,
               "daemon",
               "qemu",
-              "lxc")
+              "lxc",
+              "kvmtool")
 
 VIR_ENUM_IMPL(virHookDaemonOp, VIR_HOOK_DAEMON_OP_LAST,
               "start",
@@ -82,6 +84,10 @@ VIR_ENUM_IMPL(virHookLxcOp, VIR_HOOK_LXC_OP_LAST,
               "release",
               "started",
               "reconnect")
+
+VIR_ENUM_IMPL(virHookKvmToolOp, VIR_HOOK_KVMTOOL_OP_LAST,
+              "start",
+              "stopped")
 
 static int virHooksFound = -1;
 
@@ -245,6 +251,9 @@ virHookCall(int driver,
             break;
         case VIR_HOOK_DRIVER_LXC:
             opstr = virHookLxcOpTypeToString(op);
+            break;
+        case VIR_HOOK_DRIVER_KVMTOOL:
+            opstr = virHookKvmToolOpTypeToString(op);
             break;
     }
     if (opstr == NULL) {
